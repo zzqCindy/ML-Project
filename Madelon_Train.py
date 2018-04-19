@@ -5,7 +5,10 @@ from sklearn.preprocessing import MinMaxScaler
 from scipy.stats import pearsonr
 from sklearn.decomposition import PCA
 from sklearn import svm
-
+from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import *
+import matplotlib.pyplot as plt
+from sklearn import neighbors
 
 def readData(addr):
     prob_x = array([])
@@ -33,6 +36,11 @@ def readLabel(addr):
     return prob_y
 
 
+def fisher_criterion(v1, v2):
+    return np.power((np.mean(v1) - np.mean(v2)),2) / (np.var(v1) + np.var(v2))
+
+
+
 if __name__ == "__main__":
 
     # read data
@@ -42,30 +50,52 @@ if __name__ == "__main__":
     x_valid = readData('.\\DataSet\\MADELON\\madelon_valid.data')
     y_valid = readLabel('.\\DataSet\\MADELON\\madelon_valid.labels')
 
+    x = vstack((x_train,x_valid))
+
     # Preprocessing
 
-    min_max = MinMaxScaler().fit(vstack((x_train,x_valid)))
-    data = min_max.transform(x_train)
-    test = min_max.transform(x_valid)
+    plt.bar(range(len(var(x,axis=0))),var(x,axis=0))
+    plt.ylim(0,500)
+    #plt.show()
+
+    # Removing features with low variance
+    sel = VarianceThreshold(threshold=(500))
+    x = sel.fit_transform(x)
+    data = sel.transform(x_train)
+    test = sel.transform(x_valid)
+    print(shape(data))
+
+    # Standard
+    standard = StandardScaler().fit(x)
+    data = standard.transform(data)
+    test = standard.transform(test)
 
     # Feature Selection
-    # Pearson Correlation
-
-
+    # mutual information
+    mutualInfo = SelectPercentile(mutual_info_classif,percentile=90)
+    mutualInfo.fit(data,y_train)
+    data = mutualInfo.transform(data)
+    test = mutualInfo.transform(test)
+    print(shape(data))
 
     # PCA
-
-    pca = PCA(n_components=.95)
+    pca = PCA(n_components=.90)
     data = pca.fit_transform(data)
     test = pca.transform(test)
     print(shape(data))
 
     # Classification
-    clf = svm.SVC(C=0.8, kernel='linear', decision_function_shape='ovr')
-    clf.fit(data, y_train)
-    print(clf.score(data, y_train))
-    print(clf.score(test, y_valid))
+    # SVM
+    #clf = svm.SVC(C=1, kernel='linear', decision_function_shape='ovr')
+    #clf.fit(data, y_train)
+    #print(clf.score(data, y_train))
+    #print(clf.score(test, y_valid))
 
+    # KNN
+    knn = neighbors.KNeighborsClassifier(30)
+    knn.fit(data,y_train)
+    print(knn.score(data,y_train))
+    print(knn.score(test,y_valid))
 
 
 

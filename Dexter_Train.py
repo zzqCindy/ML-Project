@@ -33,7 +33,13 @@ def readLabel(addr):
 
 if __name__ == "__main__":
 
-    x = readData('F:\\program\\ML_Project\\DataSet\\DEXTER\\dexter_train.data')
-    y = readLabel('F:\\program\\ML_Project\\DataSet\\DEXTER\\dexter_train.labels')
+    # read data
+    x_train = readData('.\\DataSet\\DEXTER\\dexter_train.data')
+    y_train = readLabel('.\\DataSet\\DEXTER\\dexter_train.labels')
+
+    x_valid = readData('.\\DataSet\\DEXTER\\dexter_valid.data')
+    y_valid = readLabel('.\\DataSet\\DEXTER\\dexter_valid.labels')
+
+
 
     print(shape(x))

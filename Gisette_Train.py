@@ -39,8 +39,13 @@ def readLabel(addr):
 
 if __name__ == "__main__":
 
-    x = readData('F:\\program\\ML_Project\\DataSet\\GISETTE\\gisette_train.data')
-    y = readLabel('F:\\program\\ML_Project\\DataSet\\GISETTE\\gisette_train.labels')
+    # read data
+    x_train = readData('.\\DataSet\\GISETTE\\gisette_train.data')
+    y_train = readLabel('.\\DataSet\\GISETTE\\gisette_train.labels')
+
+    x_valid = readData('.\\DataSet\\GISETTE\\gisette_valid.data')
+    y_valid = readLabel('.\\DataSet\\GISETTE\\gisette_valid.labels')
+
 
     print(x)
     print(y)
