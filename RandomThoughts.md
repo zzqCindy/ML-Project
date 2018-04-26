@@ -21,15 +21,13 @@
 
 ### Classifier
 
-Naive Bayes, Preceptron, RLSC.
-
-SVM?
+Naive Bayes, Perceptron Criterion (Gradient Descent), KNN, RLSC.
 
 
 
 ### Simple Statistical Measures
 
-F scores
+F scores, ROC.
 
 
 
@@ -67,7 +65,7 @@ F scores
   - Feature Selection: Dist Based
   - Classfication: SVM
 - Attempt2
-  - Feature Selection: Fisher's discriminant criteria(about 2%)
+  - Feature Selection: Fisher's discriminant criteria (about 2%)
   - Normalization
 
 
