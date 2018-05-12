@@ -34,17 +34,13 @@ def readLabel(addr):
     return prob_y
 
 
-def fisher_criterion(v1, v2):
-    return np.power((np.mean(v1) - np.mean(v2)),2) / (np.var(v1) + np.var(v2))
-
-
-def preprocess(x_train,y_train,x_valid,num,per):
+def preprocess(x_train,y_train,x_valid,per=.89):
 
     x = vstack((x_train,x_valid))
 
     # Preprocessing
     # Removing features with low variance
-    sel = VarianceThreshold(threshold=(num))
+    sel = VarianceThreshold(threshold=(100))
     x = sel.fit_transform(x)
     data = sel.transform(x_train)
     test = sel.transform(x_valid)
@@ -87,18 +83,17 @@ def KNN(data,y_train,test,y_valid):
 def perceptron(input_data,y,input_test,y_label,iteration,rate):
 
     unit_step = lambda x: -1 if x < 0 else 1
-    w=np.random.rand(len(input_data[0]))#随机生成[0,1)之间,作为初始化w
-    bias=0.0#偏置
+    w=np.random.rand(len(input_data[0]))#random w
+    bias=0.0#bias
 
     for i in range(iteration):
         samples= zip(input_data,y)
-        for (input_i,label) in samples:#对每一组样本
-            #计算f(w*xi+b),此时x有两个
+        for (input_i,label) in samples:
             result=input_i*w+bias
             result=float(sum(result))
-            y_pred=float(unit_step(result))#计算输出值 y^
-            w=w+rate*(label-y_pred)*np.array(input_i)#更新权重
-            bias=rate*(label-y_pred)#更新bias
+            y_pred=float(unit_step(result))#compute output y
+            w=w+rate*(label-y_pred)*np.array(input_i)#update weight
+            bias=rate*(label-y_pred)#update bias
 
     y_pred = []
     for input in input_test:
@@ -156,21 +151,12 @@ if __name__ == "__main__":
     plt.ylabel('mean')
     #plt.show()
 
-    for num in range(100,201,50):
-        print('num = ',num)
-        for per in range(90,99):
-            per = float(per)/100
-            print('per = ', per)
-            data,test = preprocess(x_train,y_train,x_valid,num,per)
-            print('KNN')
-            KNN(data,y_train,test,y_valid)
-            #linear
-            #print('Perceptron')
-            #perceptron(data,y_train,test,y_valid,100,.2)
 
-            #gussian
-            #print('Bayes')
-            #bayes(data,y_train,test,y_valid)
+    for per in range(85,96):
+        per = float(per)/100
+        data,test = preprocess(x_train,y_train,x_valid,per)
+        print('KNN')
+        KNN(data,y_train,test,y_valid)
 
 
     # preprocessing

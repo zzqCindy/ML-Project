@@ -34,7 +34,7 @@ def readLabel(addr):
     return prob_y
 
 
-def preprocess(x_train,y_train,x_valid,per1,per2):
+def preprocess(x_train,y_train,x_valid,per):
 
     x = vstack((x_train,x_valid))
 
@@ -46,17 +46,16 @@ def preprocess(x_train,y_train,x_valid,per1,per2):
 
     # Feature Selection
     # mutual information
-    mutualInfo = SelectPercentile(mutual_info_classif,percentile=per1)
+    mutualInfo = SelectPercentile(mutual_info_classif,percentile=95)
     mutualInfo.fit(data,y_train)
     data = mutualInfo.transform(data)
     test = mutualInfo.transform(test)
-    print(shape(data))
 
     # PCA
-    #pca = PCA(n_components=per2)
-    #data = pca.fit_transform(data)
-    #test = pca.transform(test)
-    #print(shape(data))
+    pca = PCA(n_components=per)
+    data = pca.fit_transform(data)
+    test = pca.transform(test)
+    print(shape(data))
 
     return data, test
 
@@ -74,18 +73,17 @@ def KNN(data,y_train,test,y_valid):
 def perceptron(input_data,y,input_test,y_label,iteration,rate):
 
     unit_step = lambda x: -1 if x < 0 else 1
-    w=np.random.rand(len(input_data[0]))#随机生成[0,1)之间,作为初始化w
-    bias=0.0#偏置
+    w=np.random.rand(len(input_data[0]))#random w
+    bias=0.0#bias
 
     for i in range(iteration):
         samples= zip(input_data,y)
-        for (input_i,label) in samples:#对每一组样本
-            #计算f(w*xi+b),此时x有两个
+        for (input_i,label) in samples:
             result=input_i*w+bias
             result=float(sum(result))
-            y_pred=float(unit_step(result))#计算输出值 y^
-            w=w+rate*(label-y_pred)*np.array(input_i)#更新权重
-            bias=rate*(label-y_pred)#更新bias
+            y_pred=float(unit_step(result))#compute output y
+            w=w+rate*(label-y_pred)*np.array(input_i)#update weight
+            bias=rate*(label-y_pred)#update bias
 
     y_pred = []
     for input in input_test:
@@ -142,22 +140,21 @@ if __name__ == "__main__":
     plt.ylabel('mean')
     #plt.show()
 
-    #for per1 in range(90,100):
-    #    print('per1 = ', per1)
-    #    for per2 in range(90,96):
-    #        per2 = float(per2)/100
-    #        print('per2 = ', per2)
-    #
-    #        data,test = preprocess(x_train,y_train,x_valid,per1,per2)
-    #
-    #        #linear
-    #        print('Perceptron')
-    #        perceptron(data,y_train,test,y_valid,80,.1)
+
+    for per in range(90,100):
+        per = float(per)/100
+        print('per = ', per)
+
+        data,test = preprocess(x_train,y_train,x_valid,per)
+
+        #linear
+        print('Perceptron')
+        perceptron(data,y_train,test,y_valid,80,.1)
 
 
 
     #preprocessing
-    data,test = preprocess(x_train,y_train,x_valid,95,1.0)
+    #data,test = preprocess(x_train,y_train,x_valid,95,1.0)
 
     #classifier
     #print('KNN')
@@ -165,9 +162,9 @@ if __name__ == "__main__":
     #KNN(data,y_train,test,y_valid)
 
     #linear
-    print('Perceptron')
+    #print('Perceptron')
     #perceptron(x_train,y_train,x_train,y_train,80,.1)
-    perceptron(x_train,y_train,x_valid,y_valid,80,.1)
+    #perceptron(x_train,y_train,x_valid,y_valid,80,.1)
     #perceptron(data,y_train,test,y_valid,80,.1)
 
     #gussian

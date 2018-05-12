@@ -49,7 +49,7 @@ def preprocess(x_train,x_valid,ans,num):
     for index in range(1,len(indexArray)):
         test = np.concatenate((test,x_valid[:,indexArray[index]][:,np.newaxis]),axis=1)
 
-    # replace nan with mean
+    # replace nan with 0
     whereNan = isnan(test)
     test[whereNan] = 0
     whereNan = isnan(data)
@@ -71,18 +71,17 @@ def KNN(data,y_train,test,y_valid):
 def perceptron(input_data,y,input_test,y_label,iteration,rate):
 
     unit_step = lambda x: -1 if x < 0 else 1
-    w=np.random.rand(len(input_data[0]))#随机生成[0,1)之间,作为初始化w
-    bias=0.0#偏置
+    w=np.random.rand(len(input_data[0]))#random w
+    bias=0.0#bias
 
     for i in range(iteration):
         samples= zip(input_data,y)
-        for (input_i,label) in samples:#对每一组样本
-            #计算f(w*xi+b),此时x有两个
+        for (input_i,label) in samples:
             result=input_i*w+bias
             result=float(sum(result))
-            y_pred=float(unit_step(result))#计算输出值 y^
-            w=w+rate*(label-y_pred)*np.array(input_i)#更新权重
-            bias=rate*(label-y_pred)#更新bias
+            y_pred=float(unit_step(result))#compute output y
+            w=w+rate*(label-y_pred)*np.array(input_i)#update weight
+            bias=rate*(label-y_pred)#update bias
 
     y_pred = []
     for input in input_test:
@@ -137,7 +136,7 @@ if __name__ == "__main__":
     plt.ylim(0,50)
     #plt.show()
 
-    for num in range(10,20,1):
+    for num in range(10,21,2):
 
         print('num = ', num)
         data,test = preprocess(x_train,x_valid,ans,num)
